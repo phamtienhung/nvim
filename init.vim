@@ -15,7 +15,7 @@ set foldlevelstart=3        "
 set number                  " Show line number
 set ignorecase              " Enable case-sensitive 
 set encoding=UTF-8
-
+set autoindent              " Enable auto indent
 " Disable backup
 set nobackup
 set nowb
@@ -68,8 +68,9 @@ autocmd FileChangedShellPost *
 call plug#begin('~/AppData/Local/nvim/plugged')
 
 " Theme
-" Plug 'joshdick/onedark.vim'		       " Dark theme
+Plug 'joshdick/onedark.vim'		       " Dark theme
 Plug 'gruvbox-community/gruvbox'
+Plug 'EdenEast/nightfox.nvim' " Vim-Plug
 
 " Easy motion 
 Plug 'easymotion/vim-easymotion'
@@ -109,6 +110,9 @@ Plug 'alvan/vim-closetag'                     " Auto close HTML/XML tag
   
 " Run after install :CocInstall coc-omnisharp
 Plug 'OmniSharp/omnisharp-vim'
+" Run after install :TSInstall c_sharp
+" npm i tree-sitter-c-sharp
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate', 'do2': 'TSInstall c_sharp'}
 
 
 " Enable snippet => no need , use :CocInstall coc-snippets instead
@@ -139,9 +143,10 @@ Plug 'samoshkin/vim-mergetool'                " Git merge
 
 call plug#end()
 
-" colorscheme gruvbox
+set background=dark
+" colorscheme onedark
 
-" Overwrite some color highlight 
+"Overwrite some color highlight 
 if (has("autocmd"))
   augroup colorextend
     autocmd ColorScheme 
@@ -151,10 +156,24 @@ if (has("autocmd"))
   augroup END
 endif
 
-" Use truecolor in the termi" Statusline
+" Turns on syntax highlighting
+syntax on
+
 if has('termguicolors')
-  set termguicolors
+    " Turns on true terminal colors
+    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+
+    " Turns on 24-bit RGB color support
+    set termguicolors
+
+    " Defines how many colors should be used. (maximum: 256, minimum: 0)
+    set t_Co=256
 endif
+
+" Yaml indent
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
+
 
 " Other setting
 for setting_file in split(glob(stdpath('config').'/settings/*.vim'))

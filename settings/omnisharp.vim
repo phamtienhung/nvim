@@ -5,6 +5,7 @@ let g:OmniSharp_server_use_net6 = 1
 " ---------------------------------------------
 let g:OmniSharp_highlighting = 0
 let g:OmniSharp_popup_position = 'peek'
+let g:OmniSharp_highlighting = 0
 
 " Use fzf
 let g:OmniSharp_selector_ui = 'fzf'
