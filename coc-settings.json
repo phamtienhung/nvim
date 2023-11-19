@@ -1,17 +1,19 @@
 {
-    "omnisharp.version": "v1.37.3",
-    "omnisharp.trace.server": "information",
-    "omnisharp.debug.server": true,
-    "suggest.floatConfig": {
-        "border": true
-    },
-    "diagnostic.floatConfig": {
-        "border": true
-    },
-    "signature.floatConfig": {
-        "border": true
-    },
-    "hover.floatConfig": {
-        "border": true
-    }
+  "omnisharp.version": "v1.37.3",
+  "omnisharp.trace.server": "information",
+  "omnisharp.debug.server": true,
+  "suggest.floatConfig": {
+    "border": true
+  },
+  "diagnostic.floatConfig": {
+    "border": true
+  },
+  "signature.floatConfig": {
+    "border": true
+  },
+  "hover.floatConfig": {
+    "border": true
+  },
+  "html.format.enable": true,
+  "html.filetypes": ["html", "cshtml"],
 }
