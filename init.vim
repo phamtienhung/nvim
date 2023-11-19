@@ -68,9 +68,12 @@ autocmd FileChangedShellPost *
 call plug#begin('~/AppData/Local/nvim/plugged')
 
 " Theme
-Plug 'joshdick/onedark.vim'		       " Dark theme
+Plug 'navarasu/onedark.nvim'
 Plug 'gruvbox-community/gruvbox'
 Plug 'EdenEast/nightfox.nvim' " Vim-Plug
+
+" transparent background
+" Plug 'tribela/vim-transparent'
 
 " Easy motion 
 Plug 'easymotion/vim-easymotion'
@@ -143,18 +146,17 @@ Plug 'samoshkin/vim-mergetool'                " Git merge
 
 call plug#end()
 
-set background=dark
-" colorscheme onedark
-
-"Overwrite some color highlight 
-if (has("autocmd"))
-  augroup colorextend
-    autocmd ColorScheme 
-      \ * call onedark#extend_highlight("Comment",{"fg": {"gui": "#728083"}})
-    autocmd ColorScheme 
-      \ * call onedark#extend_highlight("LineNr", {"fg": {"gui": "#728083"}})
-  augroup END
-endif
+let g:onedark_config = {
+  \ 'style': 'deep',
+  \ 'transparent': v:true,
+  \ 'toggle_style_key': '<leader>ts',
+  \ 'ending_tildes': v:true,
+  \ 'diagnostics': {
+    \ 'darker': v:false,
+    \ 'background': v:true,
+  \ },
+\ }
+colorscheme onedark
 
 " Turns on syntax highlighting
 syntax on
