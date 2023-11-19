@@ -18,3 +18,4 @@ set guifont=DejaVuSansM\ Nerd\ Font\ Mono
 
 " Set key map to paste 
 inoremap <silent> <S-Insert> <C-R>+
+
