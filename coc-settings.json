@@ -16,4 +16,16 @@
   },
   "html.format.enable": true,
   "html.filetypes": ["html", "cshtml"],
+  "markdownlint.config": {
+    "line_length": false,
+    "default": true
+  },
+  "markdownlint.onChange": true,
+  "yaml.enable": true,
+  "yaml.format.enable": true,
+  "yaml.hover": true,
+  "[yaml]": {
+    "coc.preferences.formatOnType": true,
+    "codeLens.enable": true
+  }
 }
