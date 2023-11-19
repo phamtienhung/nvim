@@ -87,7 +87,7 @@ augroup omnisharp_commands
   " Repeat the last code action performed (does not use a selector)
   autocmd FileType cs nmap <silent> <buffer> <Leader>os. <Plug>(omnisharp_code_action_repeat)
 
-  autocmd FileType cs nmap <silent> <buffer> <Leader>os= <Plug>(omnisharp_code_format)
+  autocmd FileType cs nmap <silent> <buffer> <Leader>f= <Plug>(omnisharp_code_format)
 
   autocmd FileType cs nmap <silent> <buffer> <Leader>rn <Plug>(omnisharp_rename)
 
