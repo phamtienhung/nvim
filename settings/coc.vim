@@ -1,3 +1,5 @@
+nmap <F2> <Plug>(coc-rename)
+
 " Extensions need to be installed at first startup
 let g:coc_global_extensions = [
       \'coc-css',
@@ -6,9 +8,12 @@ let g:coc_global_extensions = [
       \'coc-jedi',
       \'coc-vimlsp',
       \'coc-omnisharp',
+      \'coc-snippets',
+      \'coc-pairs',
+      \'coc-tsserver',
+      \'coc-eslint',
+      \'coc-prettier',
       \]
-" inoremap <expr> <Tab> pumvisible() ? coc#_select_confirm() : "<Tab>"
-
 
 " May need for Vim (not Neovim) since coc.nvim calculates byte offset by count
 " utf-8 byte sequence
@@ -24,6 +29,15 @@ set updatetime=300
 " Always show the signcolumn, otherwise it would shift the text each time
 " diagnostics appear/become resolved
 set signcolumn=yes
+
+" Use `:Format` to format current buffer
+command! -nargs=0 Format :call CocAction('format')
+" Use `:Fold` to fold current buffer
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+" use `:OR` for organize import of current buffer
+command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')P
+" Highlight symbol under cursor on CursorHold
+autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " Use tab for trigger completion with characters ahead and navigate
 " NOTE: There's always complete item selected by default, you may want to enable

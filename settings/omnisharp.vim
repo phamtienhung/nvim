@@ -1,5 +1,5 @@
+autocmd FileType cs nmap <silent> <buffer> <F2> <Plug>(omnisharp_rename)
 let g:OmniSharp_server_use_net6 = 1
-
 
 " OmniSharp Settings (DEFAULT)
 " ---------------------------------------------
@@ -25,6 +25,10 @@ let g:OmniSharp_popup_options = {
 let g:OmniSharp_want_snippet = 1
 let g:neocomplete#enable_at_startup = 1
 
+" overwrite some map
+nmap <F2> <Plug>(coc-rename)g
+
+
 " Don't autoselect first omnicomplete option, show options even if there is only
 " one (so the preview documentation is accessible). Remove 'preview', 'popup'
 " and 'popuphidden' if you don't want to see any documentation whatsoever.
@@ -44,6 +48,14 @@ endif
 
 " Tell ALE to use OmniSharp for linting C# files, and no other linters.
 let g:ale_linters = { 'cs': ['OmniSharp'] }
+" Set this variable to 1 to fix files when you save them.
+let g:ale_fix_on_save = 1
+let g:ale_completion_autoimport = 1
+let g:ale_fixers = {
+\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'cs': ['dotnet-format'],
+\   'javascript': ['eslint'],
+\}
 
 augroup omnisharp_commands
   autocmd!
@@ -64,7 +76,6 @@ augroup omnisharp_commands
   autocmd FileType cs nmap <silent> <buffer> <Leader>fs <Plug>(omnisharp_find_symbol)
   autocmd FileType cs nmap <silent> <buffer> <Leader>ufx <Plug>(omnisharp_fix_usings)
   autocmd FileType cs nmap <silent> <buffer> <C-\> <Plug>(omnisharp_signature_help)
-  autocmd FileType cs imap <silent> <buffer> <C-\> <Plug>(omnisharp_signature_help)
 
   " Navigate up and down by method/property/field
   autocmd FileType cs nmap <silent> <buffer> [[ <Plug>(omnisharp_navigate_up)
@@ -73,10 +84,8 @@ augroup omnisharp_commands
   autocmd FileType cs nmap <silent> <buffer> <Leader>gcc <Plug>(omnisharp_global_code_check)
   " Contextual code actions (uses fzf, vim-clap, CtrlP or unite.vim selector when available)
   autocmd FileType cs nmap <silent> <buffer> <Leader>ac <Plug>(omnisharp_code_actions)
-  autocmd FileType cs xmap <silent> <buffer> <Leader>ac <Plug>(omnisharp_code_actions)
   " Repeat the last code action performed (does not use a selector)
   autocmd FileType cs nmap <silent> <buffer> <Leader>os. <Plug>(omnisharp_code_action_repeat)
-  autocmd FileType cs xmap <silent> <buffer> <Leader>os. <Plug>(omnisharp_code_action_repeat)
 
   autocmd FileType cs nmap <silent> <buffer> <Leader>os= <Plug>(omnisharp_code_format)
 

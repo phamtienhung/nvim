@@ -1,4 +1,4 @@
-" F5 to toggle 
+" F5 to toggle
 map <silent> <F1> :NERDTreeToggle<CR>
 " Open the existing NERDTree on each new tab.
 "autocmd BufWinEnter * silent NERDTreeMirror
@@ -25,6 +25,25 @@ let g:NERDTreeGitStatusIndicatorMapCustom = {
                 \ 'Clean'     :'✔︎',
                 \ 'Unknown'   :'?',
                 \ }
+let g:NERDTreeIgnore = ['^node_modules$', '^bin$', '^debug$']
+
+au VimEnter *  NERDTree
+" sync open file with NERDTree
+" " Check if NERDTree is open or active
+function! IsNERDTreeOpen()
+  return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
+endfunction
+" Call NERDTreeFind iff NERDTree is active, current window contains a modifiable
+" file, and we're not in vimdiff
+function! SyncTree()
+  if &modifiable && IsNERDTreeOpen() && strlen(expand('%')) > 0 && !&diff
+    NERDTreeFind
+    wincmd p
+  endif
+endfunction
+
+" Highlight currently open buffer in NERDTree
+autocmd BufEnter * call SyncTree()
 
 " Hightlight current file
 let g:nerdtree_sync_cursorline = 1
@@ -43,8 +62,8 @@ autocmd BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_
 
 " autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
-" Open file, then sync directory that contains that file 
+" Open file, then sync directory that contains that file
 autocmd BufEnter * lcd %:p:h
 
-" Ignore some type of files: 
+" Ignore some type of files:
 let NERDTreeIgnore=['__pycache__', 'site-packages']

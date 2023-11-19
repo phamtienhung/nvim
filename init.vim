@@ -113,9 +113,12 @@ Plug 'alvan/vim-closetag'                     " Auto close HTML/XML tag
   
 " Run after install :CocInstall coc-omnisharp
 Plug 'OmniSharp/omnisharp-vim'
+
+" Syntax highlighting
+" Run after install scoop install mingw # using scoop package manager on windows
 " Run after install :TSInstall c_sharp
-" npm i tree-sitter-c-sharp
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate', 'do2': 'TSInstall c_sharp'}
+" Run after install :TSInstall lua
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 
 " Enable snippet => no need , use :CocInstall coc-snippets instead
@@ -146,14 +149,15 @@ Plug 'samoshkin/vim-mergetool'                " Git merge
 
 call plug#end()
 
+" Color scheme config
+" Options: dark, darker, cool, deep, warm, warmer, light
 let g:onedark_config = {
   \ 'style': 'deep',
-  \ 'transparent': v:true,
   \ 'toggle_style_key': '<leader>ts',
   \ 'ending_tildes': v:true,
   \ 'diagnostics': {
     \ 'darker': v:false,
-    \ 'background': v:true,
+    \ 'background': v:false,
   \ },
 \ }
 colorscheme onedark
@@ -161,21 +165,20 @@ colorscheme onedark
 " Turns on syntax highlighting
 syntax on
 
-if has('termguicolors')
-    " Turns on true terminal colors
-    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-
-    " Turns on 24-bit RGB color support
-    set termguicolors
-
-    " Defines how many colors should be used. (maximum: 256, minimum: 0)
-    set t_Co=256
-endif
+" if has('termguicolors')
+"     " Turns on true terminal colors
+"     let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+"     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+"
+"     " Turns on 24-bit RGB color support
+"     set termguicolors
+"
+"     " Defines how many colors should be used. (maximum: 256, minimum: 0)
+"     set t_Co=256
+" endif
 
 " Yaml indent
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
-
 
 " Other setting
 for setting_file in split(glob(stdpath('config').'/settings/*.vim'))
@@ -187,4 +190,6 @@ set shellcmdflag=-command
 set shellquote=\"
 set shellxquote=
 
-
+" treesitter lua config
+" At the bottom of your init.vim, keep all configs on one line
+lua require'nvim-treesitter.configs'.setup{highlight={enable=true}}
