@@ -27,5 +27,6 @@
   "[yaml]": {
     "coc.preferences.formatOnType": true,
     "codeLens.enable": true
-  }
+  },
+  "snippets.ultisnips.pythonPrompt": false
 }
