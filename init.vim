@@ -76,12 +76,8 @@ Plug 'navarasu/onedark.nvim'
 " Plug 'tribela/vim-transparent'
 
 " Easy motion
-<<<<<<< HEAD
 " Plug 'easymotion/vim-easymotion'
-=======
-Plug 'easymotion/vim-easymotion'
->>>>>>> 7b9539499554dfadbe7d0e9e2453e71c9c474ed8
-
+"
 " File browser
 Plug 'preservim/nerdTree'                     " File browser
 Plug 'Xuyuanp/nerdtree-git-plugin'            " Git status
