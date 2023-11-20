@@ -1,4 +1,3 @@
-autocmd FileType cs nmap <silent> <buffer> <F2> <Plug>(omnisharp_rename)
 let g:OmniSharp_server_use_net6 = 1
 
 " OmniSharp Settings (DEFAULT)
@@ -24,10 +23,6 @@ let g:OmniSharp_popup_options = {
 
 let g:OmniSharp_want_snippet = 1
 let g:neocomplete#enable_at_startup = 1
-
-" overwrite some map
-nmap <F2> <Plug>(coc-rename)g
-
 
 " Don't autoselect first omnicomplete option, show options even if there is only
 " one (so the preview documentation is accessible). Remove 'preview', 'popup'
