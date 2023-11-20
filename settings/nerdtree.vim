@@ -10,7 +10,7 @@ autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTr
 let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
 
-"let NERDTreeMapOpenInTab='<ENTER>'
+let NERDTreeMapOpenInTab='<ENTER>'
 
 " Git status icon
 let g:NERDTreeGitStatusIndicatorMapCustom = {
@@ -26,7 +26,7 @@ let g:NERDTreeGitStatusIndicatorMapCustom = {
                 \ 'Unknown'   :'?',
                 \ }
 let g:NERDTreeIgnore = ['^node_modules$', '^bin$', '^debug$']
-
+"
 au VimEnter *  NERDTree
 " sync open file with NERDTree
 " " Check if NERDTree is open or active
@@ -41,7 +41,7 @@ function! SyncTree()
     wincmd p
   endif
 endfunction
-
+"
 " Highlight currently open buffer in NERDTree
 autocmd BufEnter * call SyncTree()
 
@@ -49,8 +49,8 @@ autocmd BufEnter * call SyncTree()
 let g:nerdtree_sync_cursorline = 1
 
 " If another buffer tries to replace NERDTree, put it in the other window, and bring back NERDTree.
-autocmd BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
-    \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
+" autocmd BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
+"     \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
 
 " Start NERDTree when Vim starts with a directory argument.
 " autocmd StdinReadPre * let s:std_in=1
