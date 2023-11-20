@@ -68,7 +68,8 @@ autocmd FileChangedShellPost *
 call plug#begin('~/AppData/Local/nvim/plugged')
 
 " Theme
-Plug 'navarasu/onedark.nvim'
+" Plug 'navarasu/onedark.nvim'
+Plug 'jacoborus/tender.vim'
 " Plug 'gruvbox-community/gruvbox'
 " Plug 'EdenEast/nightfox.nvim' " Vim-Plug
 
@@ -99,7 +100,7 @@ Plug 'voldikss/vim-floaterm'
 " Code intellisense
 Plug 'neoclide/coc.nvim', {'branch': 'release'} " Language server protocol (LSP)
 Plug 'jiangmiao/auto-pairs'                   " Parenthesis auto
-" Plug 'alvan/vim-closetag'
+Plug 'alvan/vim-closetag'
 " Plug 'mattn/emmet-vim'
 Plug 'preservim/nerdcommenter'                " Comment code
 " Plug 'liuchengxu/vista.vim'                   " Function tag bar
@@ -151,16 +152,23 @@ call plug#end()
 
 " Color scheme config
 " Options: dark, darker, cool, deep, warm, warmer, light
-let g:onedark_config = {
-  \ 'style': 'deep',
-  \ 'toggle_style_key': '<leader>ts',
-  \ 'ending_tildes': v:true,
-  \ 'diagnostics': {
-    \ 'darker': v:false,
-    \ 'background': v:false,
-  \ },
-\ }
-colorscheme onedark
+" let g:onedark_config = {
+"   \ 'style': 'deep',
+"   \ 'toggle_style_key': '<leader>ts',
+"   \ 'ending_tildes': v:true,
+"   \ 'diagnostics': {
+"     \ 'darker': v:false,
+"     \ 'background': v:false,
+"   \ },
+" \ }
+" colorscheme onedark
+
+" If you have vim >=8.0 or Neovim >= 0.1.5
+if (has("termguicolors"))
+ set termguicolors
+endif
+
+colorscheme tender
 
 " Turns on syntax highlighting
 syntax on
