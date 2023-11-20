@@ -9,8 +9,7 @@ autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTr
 " Change arrow to expand/collapse tree
 let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
-
-let NERDTreeMapOpenInTab='<ENTER>'
+let NERDTreeMapOpenInTab='<C-CR>'
 
 " Git status icon
 let g:NERDTreeGitStatusIndicatorMapCustom = {
