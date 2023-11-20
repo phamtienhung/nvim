@@ -4,16 +4,16 @@ lua print('Neovim started...')
 " => General settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set mouse=a                 " Enable mouse
-set expandtab               " Tab setting 
-set tabstop=4               " Tab setting 
+set expandtab               " Tab setting
+set tabstop=4               " Tab setting
 set shiftwidth=4            " Tab setting
-set listchars=tab:\¦\       " Tab charactor 
+set listchars=tab:\¦\       " Tab charactor
 set list
-set foldmethod=syntax         
+set foldmethod=syntax
 set foldnestmax=1
-set foldlevelstart=3        "  
+set foldlevelstart=3        "
 set number                  " Show line number
-set ignorecase              " Enable case-sensitive 
+set ignorecase              " Enable case-sensitive
 set encoding=UTF-8
 set autoindent              " Enable auto indent
 " Disable backup
@@ -21,7 +21,7 @@ set nobackup
 set nowb
 set noswapfile
 
-" Optimize 
+" Optimize
 set synmaxcol=3000    "Prevent breaking syntax hightlight when string too long. Max = 3000"
 set lazyredraw
 au! BufNewFile,BufRead *.json set foldmethod=indent " Change foldmethod for specific filetype
@@ -30,16 +30,16 @@ syntax on
 
 " Enable copying from vim to clipboard
 if has('win32')
-  set clipboard=unnamed  
+  set clipboard=unnamed
 else
   set clipboard=unnamedplus
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Key mappings
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Resize pane
-nmap <M-Right> :vertical resize +1<CR>    
+nmap <M-Right> :vertical resize +1<CR>
 nmap <M-Left> :vertical resize -1<CR>
 nmap <M-Down> :resize +1<CR>
 nmap <M-Up> :resize -1<CR>
@@ -58,10 +58,10 @@ au CursorHold,CursorHoldI * checktime
 au FocusGained,BufEnter * :checktime
 autocmd FocusGained,BufEnter,CursorHold,CursorHoldI *
     \ if mode() !~ '\v(c|r.?|!|t)' && getcmdwintype() == ''
-      \ | checktime 
+      \ | checktime
     \ | endif
 autocmd FileChangedShellPost *
-    \ echohl WarningMsg 
+    \ echohl WarningMsg
     \ | echo "File changed on disk. Buffer reloaded."
     \ | echohl None
 
@@ -69,24 +69,24 @@ call plug#begin('~/AppData/Local/nvim/plugged')
 
 " Theme
 Plug 'navarasu/onedark.nvim'
-Plug 'gruvbox-community/gruvbox'
-Plug 'EdenEast/nightfox.nvim' " Vim-Plug
+" Plug 'gruvbox-community/gruvbox'
+" Plug 'EdenEast/nightfox.nvim' " Vim-Plug
 
 " transparent background
 " Plug 'tribela/vim-transparent'
 
-" Easy motion 
-Plug 'easymotion/vim-easymotion'
+" Easy motion
+" Plug 'easymotion/vim-easymotion'
 
 " File browser
 Plug 'preservim/nerdTree'                     " File browser
 Plug 'Xuyuanp/nerdtree-git-plugin'            " Git status
 Plug 'ryanoasis/vim-devicons'                 " Icon
-Plug 'unkiwii/vim-nerdtree-sync'              " Sync current file 
-Plug 'jcharum/vim-nerdtree-syntax-highlight', {'branch': 'escape-keys'}
+Plug 'unkiwii/vim-nerdtree-sync'              " Sync current file
+" Plug 'jcharum/vim-nerdtree-syntax-highlight', {'branch': 'escape-keys'}
 
 " File search
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }            " Fuzzy finder 
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }            " Fuzzy finder
 Plug 'junegunn/fzf.vim'
 
 " Status bar
@@ -94,15 +94,15 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
 " Terminal
-Plug 'voldikss/vim-floaterm'      
+Plug 'voldikss/vim-floaterm'
 
 " Code intellisense
-Plug 'neoclide/coc.nvim', {'branch': 'release'} " Language server protocol (LSP) 
+Plug 'neoclide/coc.nvim', {'branch': 'release'} " Language server protocol (LSP)
 Plug 'jiangmiao/auto-pairs'                   " Parenthesis auto
-Plug 'alvan/vim-closetag'
+" Plug 'alvan/vim-closetag'
 " Plug 'mattn/emmet-vim'
 Plug 'preservim/nerdcommenter'                " Comment code
-Plug 'liuchengxu/vista.vim'                   " Function tag bar
+" Plug 'liuchengxu/vista.vim'                   " Function tag bar
 Plug 'alvan/vim-closetag'                     " Auto close HTML/XML tag
   \ {
     \ 'do': 'yarn install '
@@ -110,7 +110,7 @@ Plug 'alvan/vim-closetag'                     " Auto close HTML/XML tag
             \ .'&& yarn build',
     \ 'branch': 'main'
   \ }
-  
+
 " Run after install :CocInstall coc-omnisharp
 Plug 'OmniSharp/omnisharp-vim'
 
@@ -118,7 +118,7 @@ Plug 'OmniSharp/omnisharp-vim'
 " Run after install scoop install mingw # using scoop package manager on windows
 " Run after install :TSInstall c_sharp
 " Run after install :TSInstall lua
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+" Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 
 " Enable snippet => no need , use :CocInstall coc-snippets instead
@@ -138,13 +138,13 @@ Plug 'sheerun/vim-polyglot'
 " Debugging
 Plug 'puremourning/vimspector'
 
-" Fold 
+" Fold
 " Plug 'tmhedberg/SimpylFold'
 
-" Source code version control 
-Plug 'tpope/vim-fugitive'                     " Git infomation 
-Plug 'tpope/vim-rhubarb' 
-Plug 'airblade/vim-gitgutter'                 " Git show changes 
+" Source code version control
+Plug 'tpope/vim-fugitive'                     " Git infomation
+Plug 'tpope/vim-rhubarb'
+Plug 'airblade/vim-gitgutter'                 " Git show changes
 Plug 'samoshkin/vim-mergetool'                " Git merge
 
 call plug#end()
@@ -192,4 +192,4 @@ set shellxquote=
 
 " treesitter lua config
 " At the bottom of your init.vim, keep all configs on one line
-lua require'nvim-treesitter.configs'.setup{highlight={enable=true}}
+" lua require'nvim-treesitter.configs'.setup{highlight={enable=true}}
