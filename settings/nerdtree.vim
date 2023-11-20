@@ -25,10 +25,9 @@ let g:NERDTreeGitStatusIndicatorMapCustom = {
                 \ 'Clean'     :'✔︎',
                 \ 'Unknown'   :'?',
                 \ }
-let g:NERDTreeIgnore = ['^node_modules$', '^bin$', '^debug$']
 
 " au VimEnter *  NERDTree
-" " sync open file with NERDTree
+" " sync open file with NERDTreeb
 " " " Check if NERDTree is open or active
 " function! IsNERDTreeOpen()
 "   return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
@@ -70,4 +69,4 @@ let g:nerdtree_sync_cursorline = 1
 autocmd BufEnter * lcd %:p:h
 
 " Ignore some type of files:
-let NERDTreeIgnore=['__pycache__', 'site-packages']
+let NERDTreeIgnore=['__pycache__', 'site-packages', 'node_modules', 'bin', 'debug']

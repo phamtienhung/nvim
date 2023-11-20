@@ -1,4 +1,4 @@
-nmap <F2> <Plug>(coc-rename)
+" nmap <F2> <Plug>(coc-rename)
 
 " Extensions need to be installed at first startup
 let g:coc_global_extensions = [
