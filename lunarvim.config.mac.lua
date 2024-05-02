@@ -84,6 +84,12 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
+-- FORMATTTER
+local formatters = require "lvim.lsp.null-ls.formatters"
+formatters.setup {
+  {name = "black", filetypes = { "python" }}
+}
+
 -- lvim.plugins = {
 --   {
 --     "puremourning/vimspector",
