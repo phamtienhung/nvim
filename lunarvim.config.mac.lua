@@ -87,7 +87,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 -- FORMATTTER
 local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
-  {name = "black", filetypes = { "python" }}
+  { name = "black", filetypes = { "python" } }
 }
 
 -- lvim.plugins = {
@@ -250,4 +250,8 @@ vim.keymap.set('n', '<F11>', function() require('dap').step_into() end)
 vim.keymap.set('n', '<F11>', function() require('dap').step_out() end)
 vim.keymap.set('n', '<S-F5>', function() require('dapui').toggle() end)
 vim.keymap.set('n', '<leader>h', function() require('dap.ui.widgets').hover() end)
-
+-- vim.api.nvim_set_keymap('n', '<M-Right>', ':vertical resize +1<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<C-M-Right>', ':vertical resize +1<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<C-M-Left>', ':vertical resize -1<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<C-M-Down>', ':resize +1<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<C-M-Up>', ':resize -1<CR>', { noremap = true, silent = true })
