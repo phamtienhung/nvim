@@ -1,13 +1,14 @@
-Mason installation (lunarvim):
+ Installed
+    ◍ bash-language-server bashls
     ◍ black 
-    ◍ csharp-language-server 
+    ◍ csharp-language-server csharp_ls
     ◍ csharpier 
-    ◍ json-lsp 
+    ◍ json-lsp jsonls
     ◍ lemminx 
-    ◍ lua-language-server 
-    ◍ powershell-editor-services 
+    ◍ lua-language-server lua_ls
     ◍ pyright 
-    ◍ tailwindcss-language-server 
-    ◍ typescript-language-server 
-    ◍ vim-language-server 
-    ◍ yaml-language-server 
+    ◍ tailwindcss-language-server tailwindcss
+    ◍ typescript-language-server tsserver
+    ◍ vim-language-server vimls
+    ◍ xmlformatter 
+    ◍ yaml-language-server yamlls
