@@ -29,11 +29,13 @@ vim.g.clipboard = {
 
 lvim.builtin.terminal.open_mapping = "<c-t>"
 lvim.keys.insert_mode['jj'] = "<Esc>"
--- vim.opt.tabstop = 4 -- insert 2 spaces for a tab
+vim.opt.tabstop = 4           -- insert 4 spaces for a tab
 vim.opt.relativenumber = true -- relative line numbers
 vim.opt.wrap = true           -- wrap lines
 vim.opt.autoindent = true     -- autoident
-lvim.colorscheme = 'evening'
+lvim.colorscheme = 'witch-dark'
+lvim.builtin.lualine.style = "default"
+lvim.builtin.lualine.options.theme = "palenight"
 vim.opt.guifont = "JetBrainsMono\\ NFM:h10"
 
 local lspconfig = require('lspconfig')
@@ -84,22 +86,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
--- lvim.plugins = {
---   {
---     "puremourning/vimspector",
---     config = function()
---       vim.cmd("let g:vimspector_enable_mappings = 'HUMAN'")
---     end,
---     vim.keymap.set('n', '<Leader>di', '<Plug>VimspectorBalloonEval'),
---     vim.keymap.set('v', '<Leader>di', '<Plug>VimspectorBalloonEval')
---   },
--- }
--- dap.adapters.coreclr = {
---   type = 'executable',
---   command = 'netcoredbg.exe',
---   args = {'--interpreter=vscode'}
--- }
-
 lvim.builtin.dap.active = true
 lvim.builtin.dap.ui.auto_open = true
 
@@ -110,8 +96,42 @@ lvim.plugins =
 {
   "williamboman/mason.nvim",
   "mfussenegger/nvim-dap",
+  "sontungexpt/witch",
   "jay-babu/mason-nvim-dap.nvim",
+  {
+    "gelguy/wilder.nvim",
+    config = function()
+      local wilder = require('wilder')
+      wilder.setup({ modes = { ':', '/', '?' } })
+
+      wilder.set_option('pipeline', {
+        wilder.branch(
+          wilder.cmdline_pipeline(),
+          wilder.search_pipeline()
+        ),
+      })
+
+      wilder.set_option('renderer', wilder.renderer_mux({
+        [':'] = wilder.popupmenu_renderer({
+          highlighter = wilder.basic_highlighter(),
+        }),
+        ['/'] = wilder.wildmenu_renderer({
+          highlighter = wilder.basic_highlighter(),
+        }),
+      }))
+
+      wilder.set_option('renderer', wilder.renderer_mux({
+        [':'] = wilder.popupmenu_renderer({
+          highlighter = wilder.basic_highlighter(),
+        }),
+        ['/'] = wilder.wildmenu_renderer({
+          highlighter = wilder.basic_highlighter(),
+        }),
+      }))
+    end,
+  }
 }
+
 
 require("mason-nvim-dap").setup({
   lazy = true,
