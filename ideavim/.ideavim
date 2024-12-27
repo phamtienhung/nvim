@@ -13,7 +13,7 @@ set scrolloff=5
 set incsearch
 
 " Don't use Ex mode, use Q for formatting.
-map Q gq
+map Q :bd!<CR>
 
 " --- Enable IdeaVim plugins https://jb.gg/ideavim-plugins
 
@@ -21,6 +21,14 @@ map Q gq
 Plug 'machakann/vim-highlightedyank'
 " Commentary plugin
 Plug 'tpope/vim-commentary'
+" QuickScope
+set quickscope
+" Which-key
+set which-key
+" disable the timeout option
+set notimeout
+" increase the timeoutlen (default: 1000), don't add space around the equal sign
+set timeoutlen=5000
 
 
 "" -- Map IDE actions to IdeaVim -- https://jb.gg/abva4t
@@ -88,7 +96,7 @@ map <leader>sf <Action>(GotoFile)
 map <c-s-i> <Action>(NextTab)
 map <c-s-u> <Action>(PreviousTab)
 map <c-s-y> <Action>(PinActiveEditorTab)
-map <leader>nh :nohl<CR>
+map <leader>h :nohl<CR>
 
 map gi <Action>(GotoImplementation)
 map <leader>la <Action>(ShowIntentionActions)
@@ -98,3 +106,7 @@ map <leader>p :tabm+1 <CR>
 map <leader>lf <Action>(ReformatCode)
 map gh <Action>(ShowErrorDescription)
 map <C-s-w> :bd <CR>
+
+" move line
+map <M-j> <Action>(MoveLineDown)
+map <M-k> <Action>(MoveLineUp)
