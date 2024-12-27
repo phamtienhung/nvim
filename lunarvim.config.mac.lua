@@ -13,27 +13,15 @@ vim.cmd [[
     set shellquote= shellxquote=
 
     ]]
--- Set a compatible clipboard manager
--- vim.g.clipboard = {
---   copy = {
---     ["+"] = "win32yank.exe -i --crlf",
---     ["*"] = "win32yank.exe -i --crlf",
---   },
---   paste = {
---     ["+"] = "win32yank.exe -o --lf",
---     ["*"] = "win32yank.exe -o --lf",
---   },
--- }
-
--- To modify your LSP keybindings use lvim.lsp.buffer_mappings.[normal|visual|insert]_mode.
 
 lvim.builtin.terminal.open_mapping = "<c-t>"
 lvim.keys.insert_mode['jj'] = "<Esc>"
--- vim.opt.tabstop = 4 -- insert 2 spaces for a tab
+vim.opt.tabstop = 4           -- insert 2 spaces for a tab
 vim.opt.relativenumber = true -- relative line numbers
 vim.opt.wrap = true           -- wrap lines
 vim.opt.autoindent = true     -- autoident
-lvim.colorscheme = 'witch-dark'
+lvim.colorscheme = 'tokyonight-night'
+lvim.builtin.lualine.style = "moonfly"
 vim.opt.guifont = "JetBrainsMono\\ NFM:h10"
 
 local lspconfig = require('lspconfig')
@@ -97,7 +85,8 @@ formatters.setup {
 
 lvim.builtin.dap.active = true
 lvim.builtin.dap.ui.auto_open = true
-
+-- Pluging: unblevable/quick-scope
+-- vim.g.qs_highlight_on_keys = {'f', 'F'}
 -- lvim.builtin.dap.ui.
 
 -- require("mason").setup()
@@ -105,7 +94,10 @@ lvim.plugins =
 {
   "williamboman/mason.nvim",
   "mfussenegger/nvim-dap",
-  "sontungexpt/witch",
+  "folke/tokyonight.nvim",
+  "nixprime/cpsm",
+  "unblevable/quick-scope",
+  "romgrk/fzy-lua-native",
   "jay-babu/mason-nvim-dap.nvim",
   {
     "gelguy/wilder.nvim",
@@ -113,17 +105,61 @@ lvim.plugins =
       local wilder = require('wilder')
       wilder.setup({ modes = { ':', '/', '?' } })
 
+      wilder.set_option('pipeline', {
+        wilder.branch(
+        -- brew install fd
+          wilder.python_file_finder_pipeline({
+            file_command = function(ctx, arg)
+              if string.find(arg, '.') ~= nil then
+                return { 'fd', '-tf', '-H' }
+              else
+                return { 'fd', '-tf' }
+              end
+            end,
+            dir_command = { 'fd', '-td' },
+            -- filters = { 'cpsm_filter' },
+          }),
+          wilder.substitute_pipeline({
+            pipeline = wilder.python_search_pipeline({
+              skip_cmdtype_check = 1,
+              pattern = wilder.python_fuzzy_pattern({
+                start_at_boundary = 0,
+              }),
+            }),
+          }),
+          wilder.cmdline_pipeline({
+            fuzzy = 2,
+            fuzzy_filter = wilder.lua_fzy_filter(),
+          }),
+          {
+            wilder.check(function(ctx, x) return x == '' end),
+            wilder.history(),
+          },
+          wilder.python_search_pipeline({
+            pattern = wilder.python_fuzzy_pattern({
+              start_at_boundary = 0,
+            }),
+          })
+        ),
+      })
+
+      local highlighters = {
+        wilder.pcre2_highlighter(),
+        wilder.basic_highlighter(),
+      }
+
       wilder.set_option('renderer', wilder.renderer_mux({
         [':'] = wilder.popupmenu_renderer({
-          highlighter = wilder.basic_highlighter(),
+          highlighter = highlighters,
         }),
         ['/'] = wilder.wildmenu_renderer({
-          highlighter = wilder.basic_highlighter(),
+          highlighter = highlighters,
         }),
       }))
     end,
   }
 }
+
 
 require("mason-nvim-dap").setup({
   lazy = true,
