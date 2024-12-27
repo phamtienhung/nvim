@@ -95,22 +95,6 @@ formatters.setup {
   { name = "black", filetypes = { "python" } }
 }
 
--- lvim.plugins = {
---   {
---     "puremourning/vimspector",
---     config = function()
---       vim.cmd("let g:vimspector_enable_mappings = 'HUMAN'")
---     end,
---     vim.keymap.set('n', '<Leader>di', '<Plug>VimspectorBalloonEval'),
---     vim.keymap.set('v', '<Leader>di', '<Plug>VimspectorBalloonEval')
---   },
--- }
--- dap.adapters.coreclr = {
---   type = 'executable',
---   command = 'netcoredbg.exe',
---   args = {'--interpreter=vscode'}
--- }
-
 lvim.builtin.dap.active = true
 lvim.builtin.dap.ui.auto_open = true
 
@@ -121,7 +105,37 @@ lvim.plugins =
 {
   "williamboman/mason.nvim",
   "mfussenegger/nvim-dap",
+  "sontungexpt/witch",
   "jay-babu/mason-nvim-dap.nvim",
+  {
+    "gelguy/wilder.nvim",
+    config = function()
+      local wilder = require('wilder')
+      wilder.setup({ modes = { ':', '/', '?' } })
+      wilder.set_option('pipeline', {
+        wilder.branch(
+          wilder.cmdline_pipeline(),
+          wilder.search_pipeline()
+        ),
+      })
+      wilder.set_option('renderer', wilder.renderer_mux({
+        [':'] = wilder.popupmenu_renderer({
+          highlighter = wilder.basic_highlighter(),
+        }),
+        ['/'] = wilder.wildmenu_renderer({
+          highlighter = wilder.basic_highlighter(),
+        }),
+      }))
+      wilder.set_option('renderer', wilder.renderer_mux({
+        [':'] = wilder.popupmenu_renderer({
+          highlighter = wilder.basic_highlighter(),
+        }),
+        ['/'] = wilder.wildmenu_renderer({
+          highlighter = wilder.basic_highlighter(),
+        }),
+      }))
+    end,
+  }
 }
 
 require("mason-nvim-dap").setup({
