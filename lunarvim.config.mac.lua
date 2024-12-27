@@ -33,7 +33,7 @@ lvim.keys.insert_mode['jj'] = "<Esc>"
 vim.opt.relativenumber = true -- relative line numbers
 vim.opt.wrap = true           -- wrap lines
 vim.opt.autoindent = true     -- autoident
-lvim.colorscheme = 'default'
+lvim.colorscheme = 'witch-dark'
 vim.opt.guifont = "JetBrainsMono\\ NFM:h10"
 
 local lspconfig = require('lspconfig')
@@ -112,20 +112,7 @@ lvim.plugins =
     config = function()
       local wilder = require('wilder')
       wilder.setup({ modes = { ':', '/', '?' } })
-      wilder.set_option('pipeline', {
-        wilder.branch(
-          wilder.cmdline_pipeline(),
-          wilder.search_pipeline()
-        ),
-      })
-      wilder.set_option('renderer', wilder.renderer_mux({
-        [':'] = wilder.popupmenu_renderer({
-          highlighter = wilder.basic_highlighter(),
-        }),
-        ['/'] = wilder.wildmenu_renderer({
-          highlighter = wilder.basic_highlighter(),
-        }),
-      }))
+
       wilder.set_option('renderer', wilder.renderer_mux({
         [':'] = wilder.popupmenu_renderer({
           highlighter = wilder.basic_highlighter(),
