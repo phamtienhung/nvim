@@ -40,7 +40,8 @@ lspconfig.csharp_ls.setup {
 
 -- lspconfig.lemminx.setup {
 --   cmd = { "lemminx" },
---   filetypes = { "xml", "xsd", "xsl", "xslt", "svg", "props" }
+--   filetypes = { "xml", "xsd", "xsl", "xslt", "svg", "props" },
+--   single_file_support = true
 -- }
 
 -- Global mappings.
@@ -98,6 +99,8 @@ lvim.plugins =
   "nixprime/cpsm",
   "unblevable/quick-scope",
   "romgrk/fzy-lua-native",
+  "Cliffback/netcoredbg-macOS-arm64.nvim",
+  dependencies = { "mfussenegger/nvim-dap" },
   "jay-babu/mason-nvim-dap.nvim",
   {
     "gelguy/wilder.nvim",
@@ -207,7 +210,6 @@ local config = {
     type = "coreclr",
     name = "launch - netcoredbg",
     request = "launch",
-    -- console = 'integratedTerminal',
     program = function()
       if vim.fn.confirm('Should I recompile first?', '&yes\n&no', 2) == 1 then
         vim.g.dotnet_build_project()
@@ -236,7 +238,7 @@ dap.configurations.cs = config
 
 dap.adapters.coreclr = {
   type = 'executable',
-  command = 'netcoredbg',
+  command = '/Users/phamtienhung/.local/share/lunarvim/site/pack/lazy/opt/netcoredbg-macOS-arm64.nvim/netcoredbg/netcoredbg',
   args = { '--interpreter=vscode' },
   options = {
     detached = false, -- Will put the output in the REPL. #CloseEnough
@@ -272,26 +274,32 @@ dap.listeners.after['event_initialized']['me'] = function()
     'n', 'K', '<Cmd>lua require("dap.ui.widgets").hover()<CR>', { silent = true })
 end
 
-dap.listeners.after['event_terminated']['me'] = function()
-  for _, keymap in pairs(keymap_restore) do
-    vim.api.nvim_buf_set_keymap(
-      keymap.buffer,
-      keymap.mode,
-      keymap.lhs,
-      keymap.rhs,
-      { silent = keymap.silent == 1 }
-    )
-  end
-  keymap_restore = {}
-end
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "dap-float",
+    callback = function()
+        vim.api.nvim_buf_set_keymap(0, "n", "q", "<cmd>close!<CR>", { noremap = true, silent = true })
+    end
+})
+-- dap.listeners.after['event_terminated']['me'] = function()
+--   for _, keymap in pairs(keymap_restore) do
+--     vim.api.nvim_buf_set_keymap(
+--       keymap.buffer,
+--       keymap.mode,
+--       keymap.lhs,
+--       keymap.rhs,
+--       { silent = keymap.silent == 1 }
+--     )
+--   end
+--   keymap_restore = {}
+-- end
 
 vim.keymap.set('n', '<F9>', function() require('dap').toggle_breakpoint() end)
 vim.keymap.set('n', '<F5>', function() require('dap').continue() end)
 vim.keymap.set('n', '<F10>', function() require('dap').step_over() end)
 vim.keymap.set('n', '<F11>', function() require('dap').step_into() end)
 vim.keymap.set('n', '<F11>', function() require('dap').step_out() end)
-vim.keymap.set('n', '<S-F5>', function() require('dapui').toggle() end)
 vim.keymap.set('n', '<leader>h', function() require('dap.ui.widgets').hover() end)
+
 -- vim.api.nvim_set_keymap('n', '<M-Right>', ':vertical resize +1<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<C-M-Right>', ':vertical resize +1<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<C-M-Left>', ':vertical resize -1<CR>', { noremap = true, silent = true })
