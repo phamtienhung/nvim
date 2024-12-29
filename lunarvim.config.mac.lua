@@ -21,15 +21,15 @@ vim.opt.relativenumber = true -- relative line numbers
 vim.opt.wrap = true           -- wrap lines
 vim.opt.autoindent = true     -- autoident
 lvim.colorscheme = 'tokyonight-night'
-lvim.builtin.lualine.style = "moonfly"
+lvim.builtin.lualine.style = "default"
+lvim.lsp.automatic_installation = true -- Tự động cài đặt LSP
+lvim.lsp.installer.setup.automatic_installation = true
 vim.opt.guifont = "JetBrainsMono\\ NFM:h10"
+vim.opt.termguicolors = true
 
+-- LSP
 local lspconfig = require('lspconfig')
-
--- local csharp_ls_bin = "$HOME/git/csharp-language-server/src/CSharpLanguageServer/bin/Debug/net7.0/CSharpLanguageServer"
 lspconfig.csharp_ls.setup {
-  -- cmd = { csharp_ls_bin }, -- specify if you build project locally (modify csharp_ls_bin path first), otherwise download using dotnet tools & keep that like ignored
-  -- specify root_dir, so lsp can find all solutions related to your workspace
   root_dir = function(startpath)
     return lspconfig.util.root_pattern("*.sln")(startpath)
         or lspconfig.util.root_pattern("*.csproj")(startpath)
@@ -44,12 +44,6 @@ lspconfig.csharp_ls.setup {
 --   single_file_support = true
 -- }
 
--- Global mappings.
--- See :help vim.diagnostic.* for documentation on any of the below functions
-vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
-vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
 
 -- Use LspAttach autocommand to only map the following keys
 -- after the language server attaches to the current buffer
@@ -86,6 +80,7 @@ formatters.setup {
 
 lvim.builtin.dap.active = true
 lvim.builtin.dap.ui.auto_open = true
+lvim.transparent_window=true
 -- Pluging: unblevable/quick-scope
 -- vim.g.qs_highlight_on_keys = {'f', 'F'}
 -- lvim.builtin.dap.ui.
@@ -94,9 +89,20 @@ lvim.builtin.dap.ui.auto_open = true
 lvim.plugins =
 {
   "williamboman/mason.nvim",
+  "folke/which-key.nvim",
   "mfussenegger/nvim-dap",
   "folke/tokyonight.nvim",
   "nixprime/cpsm",
+  {
+    "nvim-neotest/neotest",
+    dependencies = {
+      "nvim-neotest/nvim-nio",
+      "nvim-lua/plenary.nvim",
+      "antoinemadec/FixCursorHold.nvim",
+      "nvim-treesitter/nvim-treesitter",
+      "Issafalcon/neotest-dotnet",
+    }
+  },
   "unblevable/quick-scope",
   "romgrk/fzy-lua-native",
   "Cliffback/netcoredbg-macOS-arm64.nvim",
@@ -163,6 +169,39 @@ lvim.plugins =
   }
 }
 
+require("neotest").setup({
+  adapters = {
+    require("neotest-dotnet")({
+      discovery_root = "project" -- Default
+    })
+  }
+})
+
+local wk = require("which-key")
+wk.register({
+  t = {
+    name = "Test",                          -- Nhóm phím tắt cho kiểm thử
+    n = { ":Neotest run<CR>", "Run Test" }, -- Chạy bài kiểm thử
+    f = {
+      function()
+        print(vim.fn.expand('%:p'))
+        require('neotest').run.run(vim.fn.expand('%:p'))
+      end,
+      "Run File Test"
+    },
+    t = {
+      function()
+        require('neotest').summary.toggle()
+      end,
+      "Toggle Neotest Summary"
+    },                                                                                -- Bật/tắt summary của Neotest
+    s = { ":Neotest run --suite<CR>", "Run Suite Tests" },                            -- Chạy bài kiểm thử trong suite
+    l = { ":Neotest run --last<CR>", "Run Last Test" },                               -- Chạy bài kiểm thử cuối cùng
+    o = { ":Neotest output<CR>", "Open Test Output" },                                -- Mở đầu ra kiểm thử
+    d = { ":lua require('neotest').run.run({strategy = 'dap'})<CR>", "Debug Tests" }, -- Chạy bài kiểm thử trong file
+  },
+}, { prefix = "<leader>" })                                                           -- Đặt prefix cho các phím tắt
+
 
 require("mason-nvim-dap").setup({
   lazy = true,
@@ -219,11 +258,11 @@ local config = {
     env = {
       ASPNETCORE_ENVIRONMENT = function()
         -- todo: request input from ui
-        return "Development"
+        return "development"
       end,
       ASPNETCORE_URLS = function()
         -- todo: request input from ui
-        return "http://localhost:5050"
+        return "http://localhost:5000"
       end,
     },
     cwd = function()
@@ -238,26 +277,20 @@ dap.configurations.cs = config
 
 dap.adapters.coreclr = {
   type = 'executable',
-  command = '/Users/phamtienhung/.local/share/lunarvim/site/pack/lazy/opt/netcoredbg-macOS-arm64.nvim/netcoredbg/netcoredbg',
+  command =
+  '/Users/phamtienhung/.local/share/lunarvim/site/pack/lazy/opt/netcoredbg-macOS-arm64.nvim/netcoredbg/netcoredbg',
   args = { '--interpreter=vscode' },
   options = {
     detached = false, -- Will put the output in the REPL. #CloseEnough
   }
 }
 
--- dap.configurations.cs = {
---   {
---     type = "coreclr",
---     name = "launch - netcoredbg",
---     request = "launch",
---     program = function()
---       return vim.fn.input('Path to dll', vim.fn.getcwd() .. '/bin/Debug/', 'file')
---     end,
-
---     console = "integratedTerminal"
---   },
--- }
--- vim.api.nvim_set_keymap('n', '<C-b>', ':lua vim.g.dotnet_build_project()<CR>', { noremap = true, silent = true })
+dap.adapters.netcoredbg = {
+  type = 'executable',
+  command =
+  '/Users/phamtienhung/.local/share/lunarvim/site/pack/lazy/opt/netcoredbg-macOS-arm64.nvim/netcoredbg/netcoredbg',
+  args = { '--interpreter=vscode' }
+}
 
 local keymap_restore = {}
 dap.listeners.after['event_initialized']['me'] = function()
@@ -275,24 +308,20 @@ dap.listeners.after['event_initialized']['me'] = function()
 end
 
 vim.api.nvim_create_autocmd("FileType", {
-    pattern = "dap-float",
-    callback = function()
-        vim.api.nvim_buf_set_keymap(0, "n", "q", "<cmd>close!<CR>", { noremap = true, silent = true })
-    end
+  pattern = "dap-float",
+  callback = function()
+    vim.api.nvim_buf_set_keymap(0, "n", "q", "<cmd>close!<CR>", { noremap = true, silent = true })
+  end
 })
--- dap.listeners.after['event_terminated']['me'] = function()
---   for _, keymap in pairs(keymap_restore) do
---     vim.api.nvim_buf_set_keymap(
---       keymap.buffer,
---       keymap.mode,
---       keymap.lhs,
---       keymap.rhs,
---       { silent = keymap.silent == 1 }
---     )
---   end
---   keymap_restore = {}
--- end
 
+-- Global mappings.
+-- See :help vim.diagnostic.* for documentation on any of the below functions
+vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
+
+-- Debug mapping
 vim.keymap.set('n', '<F9>', function() require('dap').toggle_breakpoint() end)
 vim.keymap.set('n', '<F5>', function() require('dap').continue() end)
 vim.keymap.set('n', '<F10>', function() require('dap').step_over() end)
@@ -300,8 +329,16 @@ vim.keymap.set('n', '<F11>', function() require('dap').step_into() end)
 vim.keymap.set('n', '<F11>', function() require('dap').step_out() end)
 vim.keymap.set('n', '<leader>h', function() require('dap.ui.widgets').hover() end)
 
--- vim.api.nvim_set_keymap('n', '<M-Right>', ':vertical resize +1<CR>', { noremap = true, silent = true })
+-- Window mapping
 vim.api.nvim_set_keymap('n', '<C-M-Right>', ':vertical resize +1<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<C-M-Left>', ':vertical resize -1<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<C-M-Down>', ':resize +1<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<C-M-Up>', ':resize -1<CR>', { noremap = true, silent = true })
+
+-- Cấu hình phím tắt cho Neotest sử dụng vim.api
+local opts = { noremap = true, silent = true }
+vim.api.nvim_set_keymap("n", "<leader>tn", ":Neotest run<CR>", opts)         -- Chạy bài kiểm thử
+vim.api.nvim_set_keymap("n", "<leader>tf", ":Neotest run --file<CR>", opts)  -- Chạy bài kiểm thử trong file hiện tại
+vim.api.nvim_set_keymap("n", "<leader>ts", ":Neotest run --suite<CR>", opts) -- Chạy bài kiểm thử trong suite
+vim.api.nvim_set_keymap("n", "<leader>tl", ":Neotest run --last<CR>", opts)  -- Chạy bài kiểm thử cuối cùng
+vim.api.nvim_set_keymap("n", "<leader>to", ":Neotest output<CR>", opts)      -- Mở đầu ra kiểm thử
