@@ -7,6 +7,10 @@
 -- vim.opt.shell = "zsh"
 -- vim.opt.shellcmdflag =
 -- "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;"
+
+-- disable netrw at the very start of your init.lua
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
 vim.cmd [[
     let &shellredir = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
     let &shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
@@ -21,7 +25,7 @@ vim.opt.relativenumber = true -- relative line numbers
 vim.opt.wrap = true           -- wrap lines
 vim.opt.autoindent = true     -- autoident
 lvim.colorscheme = 'tokyonight-night'
-lvim.builtin.lualine.style = "default"
+lvim.builtin.lualine.style = "lvim"
 lvim.lsp.automatic_installation = true -- Tự động cài đặt LSP
 lvim.lsp.installer.setup.automatic_installation = true
 vim.opt.guifont = "JetBrainsMono\\ NFM:h10"
@@ -38,11 +42,11 @@ lspconfig.csharp_ls.setup {
   end,
 }
 
--- lspconfig.lemminx.setup {
---   cmd = { "lemminx" },
---   filetypes = { "xml", "xsd", "xsl", "xslt", "svg", "props" },
---   single_file_support = true
--- }
+lspconfig.lemminx.setup {
+  cmd = { "lemminx" },
+  filetypes = { "xml", "xsd", "xsl", "xslt", "svg", "props" },
+  single_file_support = true
+}
 
 
 -- Use LspAttach autocommand to only map the following keys
@@ -80,7 +84,7 @@ formatters.setup {
 
 lvim.builtin.dap.active = true
 lvim.builtin.dap.ui.auto_open = true
-lvim.transparent_window=true
+lvim.transparent_window = true
 -- Pluging: unblevable/quick-scope
 -- vim.g.qs_highlight_on_keys = {'f', 'F'}
 -- lvim.builtin.dap.ui.
@@ -90,6 +94,8 @@ lvim.plugins =
 {
   "williamboman/mason.nvim",
   "folke/which-key.nvim",
+  "kyazdani42/nvim-web-devicons",
+  "kyazdani42/nvim-tree.lua",
   "mfussenegger/nvim-dap",
   "folke/tokyonight.nvim",
   "nixprime/cpsm",
@@ -169,6 +175,26 @@ lvim.plugins =
   }
 }
 
+vim.g.nvim_tree_icons = {
+  default = '',
+  symlink = '',
+  git = {
+    unstaged = "",
+    staged = "✓",
+    unmerged = "",
+    renamed = "➜",
+    untracked = "",
+    modified = '✥',
+  },
+  folder = {
+    default = "",
+    open = "",
+    empty = "",
+    empty_open = "",
+    symlink = ""
+  }
+}
+
 require("neotest").setup({
   adapters = {
     require("neotest-dotnet")({
@@ -199,6 +225,7 @@ wk.register({
     l = { ":Neotest run --last<CR>", "Run Last Test" },                               -- Chạy bài kiểm thử cuối cùng
     o = { ":Neotest output<CR>", "Open Test Output" },                                -- Mở đầu ra kiểm thử
     d = { ":lua require('neotest').run.run({strategy = 'dap'})<CR>", "Debug Tests" }, -- Chạy bài kiểm thử trong file
+    a = { ":lua require('neotest').run.run(vim.fn.getcwd())<CR>", "Run all test" },   -- Chạy bài kiểm thử tất cả các bài test
   },
 }, { prefix = "<leader>" })                                                           -- Đặt prefix cho các phím tắt
 
@@ -330,15 +357,19 @@ vim.keymap.set('n', '<F11>', function() require('dap').step_out() end)
 vim.keymap.set('n', '<leader>h', function() require('dap.ui.widgets').hover() end)
 
 -- Window mapping
-vim.api.nvim_set_keymap('n', '<C-M-Right>', ':vertical resize +1<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<C-M-Left>', ':vertical resize -1<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<C-M-Down>', ':resize +1<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<C-M-Up>', ':resize -1<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<C-M-Right>', ':vertical resize +3<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<C-M-Left>', ':vertical resize -3<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<C-M-Down>', ':resize +3<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<C-M-Up>', ':resize -3<CR>', { noremap = true, silent = true })
 
 -- Cấu hình phím tắt cho Neotest sử dụng vim.api
-local opts = { noremap = true, silent = true }
-vim.api.nvim_set_keymap("n", "<leader>tn", ":Neotest run<CR>", opts)         -- Chạy bài kiểm thử
-vim.api.nvim_set_keymap("n", "<leader>tf", ":Neotest run --file<CR>", opts)  -- Chạy bài kiểm thử trong file hiện tại
-vim.api.nvim_set_keymap("n", "<leader>ts", ":Neotest run --suite<CR>", opts) -- Chạy bài kiểm thử trong suite
-vim.api.nvim_set_keymap("n", "<leader>tl", ":Neotest run --last<CR>", opts)  -- Chạy bài kiểm thử cuối cùng
-vim.api.nvim_set_keymap("n", "<leader>to", ":Neotest output<CR>", opts)      -- Mở đầu ra kiểm thử
+-- local opts = { noremap = true, silent = true }
+-- vim.api.nvim_set_keymap("n", "<leader>tn", ":Neotest run<CR>", opts)         -- Chạy bài kiểm thử
+-- vim.api.nvim_set_keymap("n", "<leader>tf", ":Neotest run --file<CR>", opts)  -- Chạy bài kiểm thử trong file hiện tại
+-- vim.api.nvim_set_keymap("n", "<leader>ts", ":Neotest run --suite<CR>", opts) -- Chạy bài kiểm thử trong suite
+-- vim.api.nvim_set_keymap("n", "<leader>tl", ":Neotest run --last<CR>", opts)  -- Chạy bài kiểm thử cuối cùng
+-- vim.api.nvim_set_keymap("n", "<leader>to", ":Neotest output<CR>", opts)      -- Mở đầu ra kiểm thử
+--
+
+-- empty setup using defaults
+require("nvim-tree").setup()
