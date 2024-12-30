@@ -1,31 +1,24 @@
 -- Read the docs: https://www.lunarvim.org/docs/configuration
+-- Read the docs: https://www.lunarvim.org/docs/configuration
 -- Video Tutorials: https://www.youtube.com/watch?v=sFA9kX-Ud_c&list=PLhoH5vyxr6QqGu0i7tt_XoVK9v-KvZ3m6
 -- Forum: https://www.reddit.com/r/lunarvim/
 -- Discord: https://discord.com/invite/Xb9B4Ny
 
 -- Enable powershell as your default shell
-vim.opt.shell = "pwsh.exe -NoLogo"
-vim.opt.shellcmdflag =
-"-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;"
+-- Enable powershell as your default shell
+-- Set the terminal to use PowerShell
+require("toggleterm").setup {
+  size = 20,
+  open_mapping = [[<c-t>]],
+  direction = 'float', -- Có thể là 'vertical', 'horizontal', hoặc 'tab'
+  shell = "pwsh.exe",
+}
+
 vim.cmd [[
     let &shellredir = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
     let &shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
     set shellquote= shellxquote=
-
     ]]
--- Set a compatible clipboard manager
-vim.g.clipboard = {
-  copy = {
-    ["+"] = "win32yank.exe -i --crlf",
-    ["*"] = "win32yank.exe -i --crlf",
-  },
-  paste = {
-    ["+"] = "win32yank.exe -o --lf",
-    ["*"] = "win32yank.exe -o --lf",
-  },
-}
-
--- To modify your LSP keybindings use lvim.lsp.buffer_mappings.[normal|visual|insert]_mode.
 
 lvim.builtin.terminal.open_mapping = "<c-t>"
 lvim.keys.insert_mode['jj'] = "<Esc>"
@@ -37,6 +30,7 @@ lvim.colorscheme = 'witch-dark'
 lvim.builtin.lualine.style = "default"
 lvim.builtin.lualine.options.theme = "palenight"
 vim.opt.guifont = "JetBrainsMono\\ NFM:h10"
+vim.opt.termguicolors = true
 
 local lspconfig = require('lspconfig')
 
@@ -88,7 +82,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
 lvim.builtin.dap.active = true
 lvim.builtin.dap.ui.auto_open = true
-
+lvim.transparent_window = true
 -- lvim.builtin.dap.ui.
 
 -- require("mason").setup()
@@ -97,6 +91,20 @@ lvim.plugins =
   "williamboman/mason.nvim",
   "mfussenegger/nvim-dap",
   "sontungexpt/witch",
+  "nixprime/cpsm",
+  {
+    "nvim-neotest/neotest",
+    dependencies = {
+      "nvim-neotest/nvim-nio",
+      "nvim-lua/plenary.nvim",
+      "antoinemadec/FixCursorHold.nvim",
+      "nvim-treesitter/nvim-treesitter",
+      "Issafalcon/neotest-dotnet",
+    }
+  },
+  "unblevable/quick-scope",
+  "romgrk/fzy-lua-native",
+  dependencies = { "mfussenegger/nvim-dap" },
   "jay-babu/mason-nvim-dap.nvim",
   {
     "gelguy/wilder.nvim",
@@ -106,32 +114,95 @@ lvim.plugins =
 
       wilder.set_option('pipeline', {
         wilder.branch(
-          wilder.cmdline_pipeline(),
-          wilder.search_pipeline()
+        -- scoop install fd
+          wilder.python_file_finder_pipeline({
+            file_command = function(ctx, arg)
+              if string.find(arg, '.') ~= nil then
+                return { 'fd', '-tf', '-H' }
+              else
+                return { 'fd', '-tf' }
+              end
+            end,
+            dir_command = { 'fd', '-td' },
+            -- filters = { 'cpsm_filter' },
+          }),
+          wilder.substitute_pipeline({
+            pipeline = wilder.python_search_pipeline({
+              skip_cmdtype_check = 1,
+              pattern = wilder.python_fuzzy_pattern({
+                start_at_boundary = 0,
+              }),
+            }),
+          }),
+          wilder.cmdline_pipeline({
+            fuzzy = 2,
+            fuzzy_filter = wilder.lua_fzy_filter(),
+          }),
+          {
+            wilder.check(function(ctx, x) return x == '' end),
+            wilder.history(),
+          },
+          wilder.python_search_pipeline({
+            pattern = wilder.python_fuzzy_pattern({
+              start_at_boundary = 0,
+            }),
+          })
         ),
       })
 
-      wilder.set_option('renderer', wilder.renderer_mux({
-        [':'] = wilder.popupmenu_renderer({
-          highlighter = wilder.basic_highlighter(),
-        }),
-        ['/'] = wilder.wildmenu_renderer({
-          highlighter = wilder.basic_highlighter(),
-        }),
-      }))
+      local highlighters = {
+        wilder.pcre2_highlighter(),
+        wilder.basic_highlighter(),
+      }
 
       wilder.set_option('renderer', wilder.renderer_mux({
         [':'] = wilder.popupmenu_renderer({
-          highlighter = wilder.basic_highlighter(),
+          highlighter = highlighters,
         }),
         ['/'] = wilder.wildmenu_renderer({
-          highlighter = wilder.basic_highlighter(),
+          highlighter = highlighters,
         }),
       }))
     end,
   }
 }
 
+require("neotest").setup({
+  adapters = {
+    require("neotest-dotnet")({
+      discovery_root = "project" -- Default
+    })
+  },
+  log = {
+    level = "debug",            -- Bật chế độ log ở mức debug
+    output = "neotest_log.txt", -- Ghi log vào file
+  }
+})
+
+local wk = require("which-key")
+wk.register({
+  t = {
+    name = "Test",                          -- Nhóm phím tắt cho kiểm thử
+    n = { ":Neotest run<CR>", "Run Test" }, -- Chạy bài kiểm thử
+    f = {
+      function()
+        print(vim.fn.expand('%:p'))
+        require('neotest').run.run(vim.fn.expand('%:p'))
+      end,
+      "Run File Test"
+    },
+    t = {
+      function()
+        require('neotest').summary.toggle()
+      end,
+      "Toggle Neotest Summary"
+    },                                                                                -- Bật/tắt summary của Neotest
+    s = { ":Neotest run --suite<CR>", "Run Suite Tests" },                            -- Chạy bài kiểm thử trong suite
+    l = { ":Neotest run --last<CR>", "Run Last Test" },                               -- Chạy bài kiểm thử cuối cùng
+    o = { ":Neotest output<CR>", "Open Test Output" },                                -- Mở đầu ra kiểm thử
+    d = { ":lua require('neotest').run.run({strategy = 'dap'})<CR>", "Debug Tests" }, -- Chạy bài kiểm thử trong file
+  },
+}, { prefix = "<leader>" })                                                           -- Đặt prefix cho các phím tắt
 
 require("mason-nvim-dap").setup({
   lazy = true,
@@ -140,6 +211,24 @@ require("mason-nvim-dap").setup({
   },
 })
 
+-- vim.g.dotnet_build_project = function()
+--   local default_path = vim.fn.getcwd() .. '/'
+--   if vim.g['dotnet_last_proj_path'] ~= nil then
+--     default_path = vim.g['dotnet_last_proj_path']
+--   end
+--   local path = vim.fn.input('Path to your *proj file', default_path, 'file')
+--   vim.g['dotnet_last_proj_path'] = path
+--   local cmd = 'dotnet build -c Debug ' .. path .. ' > /dev/null'
+--   print('')
+--   print('Cmd to execute: ' .. cmd)
+--   local f = os.execute(cmd)
+--   if f == 0 then
+--     print('\nBuild: ✔️ ')
+--   else
+--     print('\nBuild: ❌ (code: ' .. f .. ')')
+--   end
+-- end
+
 vim.g.dotnet_build_project = function()
   local default_path = vim.fn.getcwd() .. '/'
   if vim.g['dotnet_last_proj_path'] ~= nil then
@@ -147,7 +236,8 @@ vim.g.dotnet_build_project = function()
   end
   local path = vim.fn.input('Path to your *proj file', default_path, 'file')
   vim.g['dotnet_last_proj_path'] = path
-  local cmd = 'dotnet build -c Debug ' .. path .. ' > /dev/null'
+  local cmd = 'dotnet build -c Debug ' .. path .. ''
+  print(cmd)
   print('')
   print('Cmd to execute: ' .. cmd)
   local f = os.execute(cmd)
@@ -192,7 +282,7 @@ local config = {
       end,
       ASPNETCORE_URLS = function()
         -- todo: request input from ui
-        return "http://localhost:5050"
+        return "http://localhost:5000"
       end,
     },
     cwd = function()
@@ -214,6 +304,12 @@ dap.adapters.coreclr = {
   }
 }
 
+dap.adapters.netcoredbg = {
+  type = 'executable',
+  command =
+  'netcoredbg',
+  args = { '--interpreter=vscode' }
+}
 -- dap.configurations.cs = {
 --   {
 --     type = "coreclr",
@@ -243,23 +339,62 @@ dap.listeners.after['event_initialized']['me'] = function()
     'n', 'K', '<Cmd>lua require("dap.ui.widgets").hover()<CR>', { silent = true })
 end
 
-dap.listeners.after['event_terminated']['me'] = function()
-  for _, keymap in pairs(keymap_restore) do
-    vim.api.nvim_buf_set_keymap(
-      keymap.buffer,
-      keymap.mode,
-      keymap.lhs,
-      keymap.rhs,
-      { silent = keymap.silent == 1 }
-    )
-  end
-  keymap_restore = {}
-end
+-- dap.listeners.after['event_terminated']['me'] = function()
+--   for _, keymap in pairs(keymap_restore) do
+--     vim.api.nvim_buf_set_keymap(
+--       keymap.buffer,
+--       keymap.mode,
+--       keymap.lhs,
+--       keymap.rhs,
+--       { silent = keymap.silent == 1 }
+--     )
+--   end
+--   keymap_restore = {}
+-- end
 
+-- Global mappings.
+-- See :help vim.diagnostic.* for documentation on any of the below functions
+vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
+
+-- Debug mapping
 vim.keymap.set('n', '<F9>', function() require('dap').toggle_breakpoint() end)
 vim.keymap.set('n', '<F5>', function() require('dap').continue() end)
 vim.keymap.set('n', '<F10>', function() require('dap').step_over() end)
 vim.keymap.set('n', '<F11>', function() require('dap').step_into() end)
 vim.keymap.set('n', '<F11>', function() require('dap').step_out() end)
-vim.keymap.set('n', '<S-F5>', function() require('dapui').toggle() end)
 vim.keymap.set('n', '<leader>h', function() require('dap.ui.widgets').hover() end)
+
+-- Window mapping
+vim.api.nvim_set_keymap('n', '<C-M-Right>', ':vertical resize +3<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<C-M-Left>', ':vertical resize -3<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<C-M-Down>', ':resize +3<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<C-M-Up>', ':resize -3<CR>', { noremap = true, silent = true })
+-- Example configs: https://github.com/LunarVim/starter.lvim
+-- Video Tutorials: https://www.youtube.com/watch?v=sFA9kX-Ud_c&list=PLhoH5vyxr6QqGu0i7tt_XoVK9v-KvZ3m6
+-- Forum: https://www.reddit.com/r/lunarvim/
+-- Discord: https://discord.com/invite/Xb9B4Ny
+
+-- Enable powershell as your default shell
+vim.opt.shell = "pwsh.exe"
+vim.opt.shellcmdflag =
+"-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;"
+vim.cmd [[
+		let &shellredir = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
+		let &shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
+		set shellquote= shellxquote=
+  ]]
+
+-- Set a compatible clipboard manager
+vim.g.clipboard = {
+  copy = {
+    ["+"] = "win32yank.exe -i --crlf",
+    ["*"] = "win32yank.exe -i --crlf",
+  },
+  paste = {
+    ["+"] = "win32yank.exe -o --lf",
+    ["*"] = "win32yank.exe -o --lf",
+  },
+}
