@@ -59,7 +59,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
 # much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
+DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # Uncomment the following line if you want to change the command execution time
 # stamp shown in the history command output.
@@ -128,5 +128,24 @@ autoload -U compinit; compinit
 zstyle ':completion:*' menu select
 
 # https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md
-# see plugins=()
+#
 
+# to be able to run MAKE
+export CPLUS_INCLUDE_PATH="/usr/local/include"
+
+# set nvim to lvim
+# alias vim="lvim"
+
+# skip home brew from update from internet everytime
+export HOMEBREW_VERBOSE=1
+export HOMEBREW_DEBUG=1
+export HOMEBREW_NO_AUTO_UPDATE=1
+export HOMEBREW_NO_INSTALL_FROM_API=1O
+
+# lazygit
+alias lg='lazygit'
+alias python='python3'
+
+# colors
+alias ls='colorls'
+source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
