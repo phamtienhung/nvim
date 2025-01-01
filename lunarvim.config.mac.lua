@@ -1,4 +1,4 @@
--- Read the docs: https://www.lunarvim.org/docs/configuration
+
 -- Video Tutorials: https://www.youtube.com/watch?v=sFA9kX-Ud_c&list=PLhoH5vyxr6QqGu0i7tt_XoVK9v-KvZ3m6
 -- Forum: https://www.reddit.com/r/lunarvim/
 -- Discord: https://discord.com/invite/Xb9B4Ny
@@ -20,15 +20,16 @@ vim.cmd [[
 
 lvim.builtin.terminal.open_mapping = "<c-t>"
 lvim.keys.insert_mode['jj'] = "<Esc>"
-vim.opt.tabstop = 4           -- insert 2 spaces for a tab
+vim.opt.tabstop = 2           -- insert 2 spaces for a tab
 vim.opt.relativenumber = true -- relative line numbers
 vim.opt.wrap = true           -- wrap lines
 vim.opt.autoindent = true     -- autoident
+vim.opt.linespace = 4
 lvim.colorscheme = 'tokyonight-night'
-lvim.builtin.lualine.style = "lvim"
+lvim.builtin.lualine.style = "default"
 lvim.lsp.automatic_installation = true -- Tự động cài đặt LSP
 lvim.lsp.installer.setup.automatic_installation = true
-vim.opt.guifont = "JetBrainsMono\\ NFM:h10"
+vim.opt.guifont = "PragmataPro:h10"
 vim.opt.termguicolors = true
 
 -- LSP
@@ -92,11 +93,7 @@ lvim.transparent_window = true
 -- require("mason").setup()
 lvim.plugins =
 {
-  "williamboman/mason.nvim",
   "folke/which-key.nvim",
-  "kyazdani42/nvim-web-devicons",
-  "kyazdani42/nvim-tree.lua",
-  "mfussenegger/nvim-dap",
   "folke/tokyonight.nvim",
   "nixprime/cpsm",
   {
@@ -319,30 +316,7 @@ dap.adapters.netcoredbg = {
   args = { '--interpreter=vscode' }
 }
 
-local keymap_restore = {}
-dap.listeners.after['event_initialized']['me'] = function()
-  for _, buf in pairs(vim.api.nvim_list_bufs()) do
-    local keymaps = vim.api.nvim_buf_get_keymap(buf, 'n')
-    for _, keymap in pairs(keymaps) do
-      if keymap.lhs == "K" then
-        table.insert(keymap_restore, keymap)
-        vim.api.nvim_buf_del_keymap(buf, 'n', 'K')
-      end
-    end
-  end
-  vim.api.nvim_set_keymap(
-    'n', 'K', '<Cmd>lua require("dap.ui.widgets").hover()<CR>', { silent = true })
-end
-
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "dap-float",
-  callback = function()
-    vim.api.nvim_buf_set_keymap(0, "n", "q", "<cmd>close!<CR>", { noremap = true, silent = true })
-  end
-})
-
 -- Global mappings.
--- See :help vim.diagnostic.* for documentation on any of the below functions
 vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
@@ -354,22 +328,15 @@ vim.keymap.set('n', '<F5>', function() require('dap').continue() end)
 vim.keymap.set('n', '<F10>', function() require('dap').step_over() end)
 vim.keymap.set('n', '<F11>', function() require('dap').step_into() end)
 vim.keymap.set('n', '<F11>', function() require('dap').step_out() end)
-vim.keymap.set('n', '<leader>h', function() require('dap.ui.widgets').hover() end)
+vim.keymap.set('n', '<leader>w', function() require('dap.ui.widgets').hover() end)
 
--- Window mapping
-vim.api.nvim_set_keymap('n', '<C-M-Right>', ':vertical resize +3<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<C-M-Left>', ':vertical resize -3<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<C-M-Down>', ':resize +3<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<C-M-Up>', ':resize -3<CR>', { noremap = true, silent = true })
+-- Resize windows with Ctrl + Arrow keys
+lvim.keys.normal_mode["<C-M-Right>"] = ":vertical resize +3<CR>"
+lvim.keys.normal_mode["<C-M-Left>"] = ":vertical resize -3<CR>"
+lvim.keys.normal_mode["<C-M-Down>"] = ":resize +3<CR>"
+lvim.keys.normal_mode["<C-M-Up>"] = ":resize -3<CR>"
 
--- Cấu hình phím tắt cho Neotest sử dụng vim.api
--- local opts = { noremap = true, silent = true }
--- vim.api.nvim_set_keymap("n", "<leader>tn", ":Neotest run<CR>", opts)         -- Chạy bài kiểm thử
--- vim.api.nvim_set_keymap("n", "<leader>tf", ":Neotest run --file<CR>", opts)  -- Chạy bài kiểm thử trong file hiện tại
--- vim.api.nvim_set_keymap("n", "<leader>ts", ":Neotest run --suite<CR>", opts) -- Chạy bài kiểm thử trong suite
--- vim.api.nvim_set_keymap("n", "<leader>tl", ":Neotest run --last<CR>", opts)  -- Chạy bài kiểm thử cuối cùng
--- vim.api.nvim_set_keymap("n", "<leader>to", ":Neotest output<CR>", opts)      -- Mở đầu ra kiểm thử
---
-
--- empty setup using defaults
-require("nvim-tree").setup()
+-- Delete without copy
+lvim.keys.normal_mode["d"] = '"_d'
+lvim.keys.normal_mode["dd"] = '"_dd'
+lvim.keys.visual_mode["d"] = '"_d'
